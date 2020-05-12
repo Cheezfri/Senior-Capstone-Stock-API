@@ -1,0 +1,1484 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "BackEndApi",
+    "description": "This api is connects the middleware and backend of a portfolio management web application"
+  },
+  "servers": [
+    {
+      "url": "https://db1.dev.why.warped-minds.org"
+    }
+  ],
+  "paths": {
+    "/user": {
+      "post": {
+        "description": "creates a new user in the database",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created a new user",
+            "headers": {
+              "location": {
+                "description": "URL to the created user record",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/409Exists"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "Search for a user in the database",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": false,
+            "description": "Email address of user",
+            "schema": {
+              "type": "string",
+              "example": "me@example.com"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found one or more users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "description": "Retrieve the information of a specific user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the user",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "description": "Update the User Record",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the user",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succesfully updated the user"
+          },
+          "304": {
+            "$ref": "#/components/responses/304NotModified"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "deletes an user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the user",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted the user"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolio": {
+      "post": {
+        "description": "creates a new portfolio for the user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Portfolio"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created a new portfolio",
+            "headers": {
+              "location": {
+                "description": "URL to the created portfolio record",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Portfolio"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/409Exists"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolios": {
+      "get": {
+        "description": "Search for all, or a subset of all portfolios",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "required": false,
+            "description": "The unique id of the user",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          },
+          {
+            "in": "query",
+            "name": "portfolioName",
+            "required": false,
+            "description": "Name of the portfolio",
+            "schema": {
+              "type": "string",
+              "example": "Portfolio A"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found one or more portfolios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Portfolio"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolio/{id}": {
+      "get": {
+        "description": "Retrieve the information about a specific portfolio",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a portfolio",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Portfolio record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Portfolio"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "description": "Update a portfolio",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a portfolio",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Portfolio"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succesfully updated the portfolio"
+          },
+          "304": {
+            "$ref": "#/components/responses/304NotModified"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a portfolio",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a portfolio",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Portfolio has been deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolioTransaction": {
+      "post": {
+        "description": "create a new portfolioTransaction in the database",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfolioTransaction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created a new Portfolio Transaction",
+            "headers": {
+              "location": {
+                "description": "URL to the created portfolio transaction record",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioTransaction"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolioTransactions": {
+      "get": {
+        "description": "get the list of transactions related to a portfolio",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "portfolioId",
+            "required": false,
+            "description": "Portfolio for which the transaction was made",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found one or more transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortfolioTransaction"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolioTransaction/{id}": {
+      "get": {
+        "description": "Retrieve the information of a specific PortfolioTransaction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the PortfolioTransaction",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PortfolioTransaction record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioTransaction"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "deletes a portfolioTransaction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the portfolioTransaction",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted the portfolioTransaction"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "description": "Update the transaction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the transaction that is updated",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfolioTransaction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succesfully updated the transaction"
+          },
+          "304": {
+            "$ref": "#/components/responses/304NotModified"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/accessLevels": {
+      "get": {
+        "description": "Retrieve all access levels in the database",
+        "responses": {
+          "200": {
+            "description": "Found one or more access levels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccessLevel"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/accessLevel/{id}": {
+      "get": {
+        "description": "Retrieve the information of a specific access level",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique id of the access level",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Access Level record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessLevel"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/assets": {
+      "get": {
+        "description": "Get all the assets in the system/a specific asset based on search string",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tickerSearch",
+            "required": false,
+            "description": "To perform search against the asset ticker",
+            "schema": {
+              "type":"string",
+              "example": "aapl"
+            }
+          },
+          {
+            "in": "query",
+            "name": "nameSearch",
+            "required": false,
+            "description": "To perform search against the asset name",
+            "schema": {
+              "type":"string",
+              "example": "apple"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/asset/{id}": {
+      "get": {
+        "description": "Retrieve the information about a specific asset",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a asset",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/assetPriceDatas": {
+      "get": {
+        "description": "Get the asset price data of an asset/assets",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "assetId",
+            "required": false,
+            "description": "unique key of assetpricedata",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 12345
+            }
+          },
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": false,
+            "description": "to get the assetprice data starting from a particular date",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "1996-12-19T16:39:57-08:00"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": false,
+            "description": "to get the assetprice data till a particular date",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "1996-12-19T16:39:57-08:00"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "asset record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AssetPriceData"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolioShare": {
+      "post": {
+        "description": "creates a new portfolioShare object in the database",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfolioShare"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "successfully created a new PortfolioShare object",
+            "headers": {
+              "location": {
+                "description": "URL to the created PortfolioShare record",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioShare"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/409Exists"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolioShares": {
+      "get": {
+        "description": "Search for a portfolioShare / get all portfolioShares ",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "portfolioId",
+            "required": false,
+            "description": "Id of the portfolio to which the portfolioShare belongs",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 123
+            }
+          },
+          {
+            "in": "query",
+            "name": "sharedUserId",
+            "required": false,
+            "description": "Id of the user with whom the portfolio is shared",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 123
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found one or more portfolioShares",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortfolioShare"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/portfolioShare/{id}": {
+      "get": {
+        "description": "Retrieve the information about a specific portfolioShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a portfolioShare",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PortfolioShare record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioShare"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "put": {
+        "description": "Update a portfolioShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a portfolioShare",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfolioShare"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succesfully updated the portfolioShare"
+          },
+          "304": {
+            "$ref": "#/components/responses/304NotModified"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a portfolioShare",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The unique identifier of a portfolioShare",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 86
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PortfolioShare has been deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/analytic/portfolioAggregate": {
+      "get": {
+        "description": "The aggregate price data of the overall portfolio required for analytics ",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "portfolioId",
+            "required": false,
+            "description": "Id of the portfolio",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 123
+            }
+          },
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": false,
+            "description": "The start date of the analytic calculation",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "1996-12-19T16:39:57-08:00"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": false,
+            "description": "The end date of the analytic calculation",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "1996-12-19T16:39:57-08:00"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The aggregate pricedata of a portfolio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioAggregateData"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    },
+    "/analytic/assetAggregate": {
+      "get": {
+        "description": "The aggregate of each asset in portfolio ",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "portfolioId",
+            "required": false,
+            "description": "Id of the portfolio",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 123
+            }
+          },
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": false,
+            "description": "The start date of the analytic calculation",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "1996-12-19T16:39:57-08:00"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": false,
+            "description": "The end date of the analytic calculation",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "1996-12-19T16:39:57-08:00"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The aggregate pricedata of each asset in a portfolio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetAggregateData"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "304NotModified": {
+        "description": "Record not modified"
+      },
+      "404NotFound": {
+        "description": "Record not found in the system"
+      },
+      "409Exists": {
+        "description": "Record already exists in the system"
+      },
+      "500Error": {
+        "description": "An error occurred processing this request"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "description": "model containing user info",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique Database Primary Key",
+            "example": 1
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email Address",
+            "example": "user@example.com"
+          },
+          "passwordHash": {
+            "type": "string",
+            "description": "Hashed & Salted Password",
+            "example": "3E4F23125C23A87DF43D..."
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User's First Name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User's Last Name",
+            "example": "Doe"
+          },
+          "accessLevel": {
+            "$ref": "#/components/schemas/AccessLevel"
+          },
+          "locked": {
+            "type": "boolean",
+            "example": true
+          },
+          "salt": {
+            "type": "string",
+            "description": "Password Salt",
+            "example": "dvkjb23iuvb"
+          },
+          "localCurrency":{
+            "type": "string",
+            "example": "Yen"
+          }
+        }
+      },
+      "AccessLevel": {
+        "description": "Access levels of the users",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique Database Primary Key",
+            "example": 1
+          },
+          "role": {
+            "$ref": "#/components/schemas/AccessRole"
+          },
+          "name": {
+            "type": "string",
+            "description": "Plain language name of the role",
+            "example": "Administrator"
+          }
+        }
+      },
+      "AccessRole": {
+        "description": "The role of a user",
+        "type": "string",
+        "enum": [
+          "USER",
+          "SUPPORT",
+          "ADMIN"
+        ]
+      },
+      "LoginRecord": {
+        "description": "login log",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1996-12-19T16:39:57-08:00"
+          }
+        }
+      },
+      "Portfolio": {
+        "description": "The user portfolio model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique Database Primary Key",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Portfolio A"
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "serialNumber": {
+            "type": "integer",
+            "example": "001820"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PortfolioType"
+          },
+          "ownerUserId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
+          }
+        }
+      },
+      "PortfolioType": {
+        "description": "Type of the portfolio",
+        "type": "string",
+        "enum": [
+          "NORMAL",
+          "WHATIF"
+        ]
+      },
+      "PortfolioShare": {
+        "description": "How a portfolio is shared",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 123
+          },
+          "portfolioId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sharedWithUserId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
+          },
+          "portfolioRights": {
+            "$ref": "#/components/schemas/PortfolioRights"
+          }
+        }
+      },
+      "PortfolioRights": {
+        "description": "The rights of the portfolio",
+        "type": "string",
+        "enum": [
+          "READ",
+          "WRITE"
+        ]
+      },
+      "PortfolioTransaction": {
+        "description": "The transaction model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "portfolioId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PortfolioTransactionType"
+          },
+          "assetId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12
+          },
+          "dateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "PortfolioTransactionType": {
+        "description": "Type of the transaction",
+        "type": "string",
+        "enum": [
+          "BUY",
+          "SELL"
+        ]
+      },
+      "Asset": {
+        "description": "Asset model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "ticker": {
+            "type": "string",
+            "example": "$APPL"
+          },
+          "name": {
+            "type": "string",
+            "example": "Apple, Inc."
+          },
+          "category": {
+            "$ref": "#/components/schemas/AssetCategory"
+          },
+          "description": {
+            "type": "string",
+            "example": "App is an up and coming tech startup"
+          }
+        }
+      },
+      "AssetCategory": {
+        "description": "category of the asset",
+        "type": "string",
+        "enum": [
+          "STOCK",
+          "BOND",
+          "CRYPTO",
+          "CURRENCY"
+        ]
+      },
+      "AssetPriceData": {
+        "description": "The data related to the price of an asset",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "assetId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 123
+          },
+          "dateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "closePrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "highPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "lowPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "adjustedClosePrice":{
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "PortfolioAggregateData": {
+        "description": "The aggregate value of a portfolio from start to end date",
+        "properties": {
+          "portfolioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique Database Primary Key",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Portfolio A"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1996-12-19T16:39:57-08:00"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1996-12-19T16:39:57-08:00"
+          },
+          "portfolioValueByDate":{
+            "type": "array",
+            "description": "The array consists of the total portfolio value on each date from start to end",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioTotalValue"
+            }
+          }
+        }
+      },
+      "PortfolioTotalValue": {
+        "description": "The total value of the portfolio on a particular date",
+        "properties": {
+          "portfolioId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "portfolioValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1996-12-19T16:39:57-08:00"
+          }
+        }
+      },
+      "AssetAggregateData": {
+        "description": "The aggregatte values of assets in a portfolio over a time period",
+        "properties": {
+          "portfolioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique Database Primary Key",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Portfolio A"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1996-12-19T16:39:57-08:00"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "1996-12-19T16:39:57-08:00"
+          },
+          "assetsInPortfolio":{
+            "type": "array",
+            "description": "The list of assets for which transactions happened in a potfolio",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "assetValueHashMap":{
+            "type": "object",
+            "description": "The hashmap with key as assetId and values as an array of pricedata of asset over time",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AssetPriceData"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

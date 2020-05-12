@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'io.swagger.core.v3.swagger-gradle-plugin'
+    id 'com.bmuschko.cargo' version '2.6.1'
+}
+
+group 'edu.albany.icsi418.fa19.teamy'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+
+    compile 'org.apache.httpcomponents:httpclient:4.5.10'
+    compile 'org.apache.httpcomponents:fluent-hc:4.5.10'
+
+    // https://mvnrepository.com/artifact/com.github.joschi.jackson/jackson-datatype-threetenbp
+    // For Swagger Import things....
+    compile group: 'com.github.joschi.jackson', name: 'jackson-datatype-threetenbp', version: '2.6.4'
+
+    // https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api
+    // JPA Base API Classes
+    implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
+    // Concrete Implementation
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.2.0.RELEASE'
+
+    // Don't include in the .WAR file....
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    def cargoVersion = '1.7.7'
+    cargo "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion",
+            "org.codehaus.cargo:cargo-ant:$cargoVersion"
+}
+
+cargo { // This is needed to prevent Cargo from flipping out
+    containerId = 'wildfly17x'
+
+    deployable {
+        context = 'ROOT'
+    }
+}
+
+task deployDev(type: com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote) {
+    description = "Deploys WAR to remote Wildfly dev instance."
+    containerId = 'wildfly17x'
+    hostname = 'db1.dev.why.warped-minds.org'
+    if (project.hasProperty('wildflyUsername')) {
+        println("Username Found: " + project.property('wildflyUsername'))
+        username = project.property('wildflyUsername')
+    }
+    if (project.hasProperty('wildflyPassword')) {
+        println("Password Found: " + project.property('wildflyPassword'))
+        password = project.property('wildflyPassword')
+    }
+    context = 'ROOT'
+}
+
+task deployProd(type: com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote) {
+    description = "Deploys WAR to remote Wildfly prod instance."
+    containerId = 'wildfly17x'
+    hostname = 'db1.prod.why.warped-minds.org'
+    if (project.hasProperty('wildflyUsername')) {
+        println("Username Found: " + project.property('wildflyUsername'))
+        username = project.property('wildflyUsername')
+    }
+    if (project.hasProperty('wildflyPassword')) {
+        println("Password Found: " + project.property('wildflyPassword'))
+        password = project.property('wildflyPassword')
+    }
+    context = 'ROOT'
+}

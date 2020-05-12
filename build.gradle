@@ -1,0 +1,50 @@
+plugins {
+    id 'com.gradle.build-scan' version '2.4.2'
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'io.swagger.core.v3.swagger-gradle-plugin' version '2.0.10'
+}
+
+allprojects {
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    dependencies {
+        // Swagger for Codegen and clients
+
+        // https://mvnrepository.com/artifact/io.swagger/swagger-core
+        implementation group: 'io.swagger.core.v3', name: 'swagger-core', version: '2.0.10'
+        // https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
+        implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.0.10'\
+
+        implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+        implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
+
+        implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
+        implementation group: 'com.squareup.okhttp', name: 'logging-interceptor', version: '2.7.5'
+
+        implementation group: 'io.gsonfire', name: 'gson-fire', version: '1.8.3'
+
+
+        implementation 'org.springframework.boot:spring-boot-dependencies:2.2.0.RELEASE'
+        implementation 'org.springframework.boot:spring-boot-starter-web:2.2.0.RELEASE'
+        // https://mvnrepository.com/artifact/org.reactivestreams/reactive-streams
+        implementation group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.3'
+
+    }
+}
+
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+    publishAlways()
+}
+
+group 'edu.albany.icsi418.fa19.teamy'
+version '1.0-SNAPSHOT'

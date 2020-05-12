@@ -1,0 +1,22 @@
+:root {
+    --theme-color: skyblue;
+    --header-height: 80px;
+}
+
+.header {
+    background-color: var(--theme-color);
+    height: var(--header-height);
+}
+
+.logo {
+    height: var(--header-height);
+    width: var(--header-height);
+}
+
+.nav {
+    background-color: beige;
+}
+
+.main {
+    background-color: white;
+}

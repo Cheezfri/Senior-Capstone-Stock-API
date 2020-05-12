@@ -1,0 +1,19 @@
+:root {
+    --theme-color: skyblue;
+}
+
+.logo {
+    width: var(--header-height);
+    height: var(--header-height);
+}
+
+body {
+    vertical-align: middle;
+    background-color: var(--theme-color);
+}
+
+.innerlayout {
+    margin-top: 50px;
+    background-color: white;
+    align-items: center;
+}

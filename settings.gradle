@@ -1,0 +1,5 @@
+rootProject.name = 'portfolio'
+include 'backend'
+include 'middleware'
+include 'frontend'
+
